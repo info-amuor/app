@@ -7,7 +7,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.util.regex.Pattern;
 
@@ -137,6 +141,28 @@ public class MainFormController {
     public void btnPrintAll(ActionEvent actionEvent) {
     }
 
-    public void btnBackupData(ActionEvent actionEvent) {
+    public void btnBackupData(ActionEvent actionEvent) throws IOException {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("My Backup File");
+        File file = chooser.showSaveDialog(null);
+
+        if (file!=null){
+            String backupTempData = "mysqldump -u"+DATABASE_USER+" -p"+DATABASE_PASSWORD+" "+DATABASE_URL+DATABASE_NAME;
+            ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe","/c",backupTempData);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+
+            try(FileWriter fileWriter = new FileWriter(file)){
+                int readBytesData;
+                byte[] bytes = new byte[1024];
+                while ((readBytesData=process.getErrorStream().read(bytes))!=-1){
+                    fileWriter.write(new String(bytes,0,readBytesData));
+                }
+            }
+
+            System.out.println(file.getAbsolutePath());
+
+        }
     }
 }
