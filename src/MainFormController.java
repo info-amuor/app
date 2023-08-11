@@ -1,14 +1,14 @@
 import com.sun.xml.internal.bind.v2.model.core.ID;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.regex.Pattern;
 
 public class MainFormController {
@@ -27,6 +27,40 @@ public class MainFormController {
     private static final String DATABASE_NAME="customer_db";
     private static final String DATABASE_USER="root";
     private static final String DATABASE_PASSWORD="1234";
+
+    public void initialize(){
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
+        colAddress.setCellValueFactory(new PropertyValueFactory("address"));
+        colSalary.setCellValueFactory(new PropertyValueFactory("salary"));
+        loadAllCustomers();
+    }
+
+    private void loadAllCustomers() {
+        try{
+            Connection connection = DriverManager.getConnection(DATABASE_URL+DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD);
+            String sql = "SELECT * FROM customer";
+            PreparedStatement stm = connection.prepareStatement(sql);
+
+            ResultSet resultSet = stm.executeQuery();
+
+            ObservableList<CustomerTM> list = FXCollections.observableArrayList();
+
+            while (resultSet.next()){
+                list.add(
+                        new CustomerTM(resultSet.getString(1),resultSet.getString(2),
+                                resultSet.getString(3),resultSet.getDouble(4))
+                );
+            }
+            tableCustomer.setItems(list);
+
+        } catch (SQLException e) {
+            new Alert(Alert.AlertType.ERROR, "Try Again!").show();
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
     private boolean validateFields(TextField field, Pattern pattern){
         if (pattern.matcher(field.getText()).matches()){
@@ -74,6 +108,7 @@ public class MainFormController {
 
                 if (stm.executeUpdate()>0){
                     new Alert(Alert.AlertType.INFORMATION, "Saved!").show();
+                    loadAllCustomers();
                     clearData();
                 }else{
                     new Alert(Alert.AlertType.ERROR, "Try Again!").show();
