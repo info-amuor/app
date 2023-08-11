@@ -28,7 +28,7 @@ public class MainFormController {
         }
     }
     private boolean validate() {
-        final String ID_REG = "\\d-\\d"; //D-1***
+        final String ID_REG = "\\D-\\d"; //D-1***
         final String NAME_REG = ".{3,}";
         final String ADDRESS_REG = ".+";
         final String SALARY_REG = "\\d+(\\.\\d{1,2})?";
