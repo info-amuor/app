@@ -147,7 +147,7 @@ public class MainFormController {
         File file = chooser.showSaveDialog(null);
 
         if (file!=null){
-            String backupTempData = "mysqldump -u"+DATABASE_USER+" -p"+DATABASE_PASSWORD+" "+DATABASE_URL+DATABASE_NAME;
+            String backupTempData = "mysqldump -u root -p 1234 jdbc:mysql://localhost:3306/customer_db";
             ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe","/c",backupTempData);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
@@ -156,7 +156,7 @@ public class MainFormController {
             try(FileWriter fileWriter = new FileWriter(file)){
                 int readBytesData;
                 byte[] bytes = new byte[1024];
-                while ((readBytesData=process.getErrorStream().read(bytes))!=-1){
+                while ((readBytesData=process.getInputStream().read(bytes))!=-1){
                     fileWriter.write(new String(bytes,0,readBytesData));
                 }
             }
