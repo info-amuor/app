@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="380.0" prefWidth="692.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainFormController">
    <children>
       <Label layoutX="7.0" layoutY="14.0" text="Customer Form" textFill="#170172">
@@ -32,5 +31,6 @@
         </columns>
       </TableView>
       <Button layoutX="588.0" layoutY="334.0" mnemonicParsing="false" onAction="#btnPrintAll" prefHeight="25.0" prefWidth="95.0" text="Print All" />
+      <Button layoutX="499.0" layoutY="86.0" mnemonicParsing="false" onAction="#btnBackupData" text="Backup Data" />
    </children>
 </AnchorPane>

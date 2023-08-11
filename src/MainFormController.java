@@ -5,6 +5,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 public class MainFormController {
@@ -17,6 +21,12 @@ public class MainFormController {
     public TableColumn colName;
     public TableColumn colAddress;
     public TableColumn colSalary;
+
+
+    private static final String DATABASE_URL="jdbc:mysql://localhost:3306/";
+    private static final String DATABASE_NAME="customer_db";
+    private static final String DATABASE_USER="root";
+    private static final String DATABASE_PASSWORD="1234";
 
     private boolean validateFields(TextField field, Pattern pattern){
         if (pattern.matcher(field.getText()).matches()){
@@ -53,13 +63,45 @@ public class MainFormController {
 
     public void btnSaveOnAction(ActionEvent actionEvent) {
         if (validate()){
-            // save
+            try{
+                Connection connection = DriverManager.getConnection(DATABASE_URL+DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD);
+                String sql = "INSERT INTO customer VALUES(?,?,?,?)";
+                PreparedStatement stm = connection.prepareStatement(sql);
+                stm.setObject(1,txtId.getText());
+                stm.setObject(2,txtName.getText());
+                stm.setObject(3,txtAddress.getText());
+                stm.setObject(4,Double.parseDouble(txtSalary.getText()));
+
+                if (stm.executeUpdate()>0){
+                    new Alert(Alert.AlertType.INFORMATION, "Saved!").show();
+                    clearData();
+                }else{
+                    new Alert(Alert.AlertType.ERROR, "Try Again!").show();
+                }
+
+            } catch (SQLException e) {
+                new Alert(Alert.AlertType.ERROR, "Try Again!").show();
+                throw new RuntimeException(e);
+            }
+
         }else{
             new Alert(Alert.AlertType.WARNING, "Please insert valid data!").show();
         }
 
     }
 
+    private void clearData(){
+        txtId.clear();
+        txtName.clear();
+        txtSalary.clear();
+        txtAddress.clear();
+
+        txtId.requestFocus();
+    }
+
     public void btnPrintAll(ActionEvent actionEvent) {
+    }
+
+    public void btnBackupData(ActionEvent actionEvent) {
     }
 }
