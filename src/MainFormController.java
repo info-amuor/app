@@ -147,7 +147,7 @@ public class MainFormController {
         File file = chooser.showSaveDialog(null);
 
         if (file!=null){
-            String backupTempData = "mysqldump -u root -p 1234 jdbc:mysql://localhost:3306/customer_db";
+            String backupTempData = "mysqldump -u root -p1234 customer_db";
             ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe","/c",backupTempData);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
